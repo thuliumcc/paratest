@@ -48,6 +48,7 @@ class Worker
     {
         $this->checkStarted();
         $this->commands[] = $testCmd;
+//        var_dump($testCmd);
         fwrite($this->pipes[0], $testCmd . "\n");
         $this->inExecution++;
     }

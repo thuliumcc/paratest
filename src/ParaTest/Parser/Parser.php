@@ -136,11 +136,18 @@ class Parser
     private function classNameMatchesFileName($filename, $className)
     {
         return strpos($filename, $className) !== false
-            || strpos($filename, $this->invertSlashes($className)) !== false;
+        || strpos($filename, $this->invertSlashes($className)) !== false
+        || strpos(strtolower($filename), strtolower($this->invertSlashes($className) . '.php')) !== false
+        || strpos(strtolower($this->removeUnderscores($filename)), strtolower($this->invertSlashes($className) . '.php')) !== false;
     }
 
     private function invertSlashes($className)
     {
         return str_replace('\\', '/', $className);
+    }
+
+    private function removeUnderscores($className)
+    {
+        return str_replace('_', '', $className);
     }
 }

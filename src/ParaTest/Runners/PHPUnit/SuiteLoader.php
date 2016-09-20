@@ -109,10 +109,15 @@ class SuiteLoader
      */
     private function initSuites()
     {
-        foreach ($this->files as $path) {
+        foreach ($this->files as $i => $path) {
             try {
                 $parser = new Parser($path);
                 if ($class = $parser->getClass()) {
+                    $classGroups = $this->methodGroups($class);
+                    if (!$this->testMatchGroupOptions($classGroups)) {
+                        unset($this->files[$i]);
+                        continue;
+                    }
                     $this->loadedSuites[$path] = $this->createSuite($path, $class);
                 }
             } catch (NoClassInFileException $e) {
@@ -194,9 +199,9 @@ class SuiteLoader
      * With empty filter this method returns single test if doesnt' have data provider or
      * data provider is not used and return all test if has data provider and data provider is used.
      *
-     * @param  ParsedClass  $class            Parsed class.
-     * @param  ParsedObject $method           Parsed method.
-     * @param  bool         $useDataProvider  Try to use data provider or not.
+     * @param  ParsedClass $class Parsed class.
+     * @param  ParsedObject $method Parsed method.
+     * @param  bool $useDataProvider Try to use data provider or not.
      * @return string[]     Array of test names.
      */
     private function getMethodTests($class, $method, $useDataProvider = false)
@@ -267,7 +272,7 @@ class SuiteLoader
     private function testMatchOptions($className, $name, $group)
     {
         $result = $this->testMatchGroupOptions($group)
-                && $this->testMatchFilterOptions($className, $name, $group);
+            && $this->testMatchFilterOptions($className, $name, $group);
 
         return $result;
     }
